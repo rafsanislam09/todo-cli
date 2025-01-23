@@ -18,6 +18,7 @@ void main() {
       editTask();
       break;
     case 'delete':
+      clearConsole();
       deleteTask();
       break;
     case 'exit':
@@ -95,27 +96,40 @@ void editTask() {
 }
 
 void deleteTask() {
-  String tasksToDelete = getInput("Enter task number to delete:   ");
-  checkExit(tasksToDelete);
+  displayTasks();
+  String tasksToDeleteInput = getInput("Enter task number to delete(comma or space-separated):   ");
+  checkExit(tasksToDeleteInput);
 
-  int? deletedTaskIndex = int.tryParse(tasksToDelete);
-
-  if (deletedTaskIndex == null || deletedTaskIndex < 1 || deletedTaskIndex > savedTasks.length) {
-    forwardTo("Error: Invalid task number!", deleteTask);
-    return;
-  }
-
-  // `deletedTaskIndex - 1` because dart counts list index from 0 instead of 1, so subtracting 1 is necessary
-  savedTasks.removeAt(deletedTaskIndex - 1);
-  
+  List<int> deletedTaskIndex = [];
   try {
-    savedTasksFile.writeAsStringSync(savedTasks.join('\n'));
-    forwardTo("Task deleted successfully!", main);
-    return;
+    deletedTaskIndex = tasksToDeleteInput
+    .split(RegExp(r'[,\s]+'))  //Splits by comma or any whitespace
+    .map((element) => int.parse(element.trim()))
+    .toList();
   } catch(exception) {
-    forwardTo("Error while deleting task: $exception", main);
+    forwardTo("Error: Invalid task number entered!", deleteTask);
+  }
+
+  if (deletedTaskIndex.contains(null)) {
+    forwardTo("Error: Invalid input! Please enter valid task number(s).", deleteTask);
     return;
   }
+
+  //Sorting `List<int?>deletedTaskIndex` in descending order to avoid index shifting issues.
+  deletedTaskIndex.sort((a, b) => a.compareTo(b));
+
+  for(int index in deletedTaskIndex) {
+    if(index < 1 || index > savedTasks.length) {
+      forwardTo("Error: Task number $index is out of range!", deleteTask);
+    }
+  }
+
+  for(int index in deletedTaskIndex) {
+    // `deletedTaskIndex - 1` because dart counts list index from 0 instead of 1, so subtracting 1 is necessary
+    savedTasks.removeAt(index - 1);
+  }
+  
+  saveTasksToFile(successMessage: "Task(s) has been deleted successfully", errorMessage: "Task could not be deleted");
 }
 
 //This function actually helps the user when a user accidentally types another command instead of exit or changes his mind. It helps him to exit from other instances, such as `addTask()` or `deleteTask()`.
@@ -163,5 +177,17 @@ void displayTasks() {
   for (String task in savedTasks) {
     int taskNumber = savedTasks.indexOf(task) + 1;
     print("$taskNumber. $task");
+  }
+}
+
+//Saves the tasks to the `savedTasks.txt` file
+void saveTasksToFile({required String successMessage, required String errorMessage}) {
+  try {
+    savedTasksFile.writeAsStringSync(savedTasks.join('\n'));
+    forwardTo(successMessage, main);
+    return;
+  } catch(exception) {
+    forwardTo("$errorMessage: Error: $exception", main);
+    return;
   }
 }
