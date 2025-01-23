@@ -18,7 +18,6 @@ void main() {
       editTask();
       break;
     case 'delete':
-      clearConsole();
       deleteTask();
       break;
     case 'exit':
@@ -96,10 +95,10 @@ void editTask() {
 }
 
 void deleteTask() {
-  String input = getInput("Enter task number to delete:   ");
-  checkExit(input);
+  String tasksToDelete = getInput("Enter task number to delete:   ");
+  checkExit(tasksToDelete);
 
-  int? deletedTaskIndex = int.tryParse(input);
+  int? deletedTaskIndex = int.tryParse(tasksToDelete);
 
   if (deletedTaskIndex == null || deletedTaskIndex < 1 || deletedTaskIndex > savedTasks.length) {
     forwardTo("Error: Invalid task number!", deleteTask);
@@ -109,7 +108,7 @@ void deleteTask() {
   // `deletedTaskIndex - 1` because dart counts list index from 0 instead of 1, so subtracting 1 is necessary
   savedTasks.removeAt(deletedTaskIndex - 1);
   
-  try{
+  try {
     savedTasksFile.writeAsStringSync(savedTasks.join('\n'));
     forwardTo("Task deleted successfully!", main);
     return;
