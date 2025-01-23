@@ -1,2 +1,1 @@
-A sample command-line application with an entrypoint in `bin/`, library code
-in `lib/`, source code in `lib/src/' and example unit test in `test/`.
+This is a sample CLI-based To-do app. The sources are located in `lib/src/main.dart`. This app has been made using Google IDX. Obviously, you can develop this app in any platform. It is a hobby project, lincensed under GNU GPL License. Feel free to fork or contribute to this project!
