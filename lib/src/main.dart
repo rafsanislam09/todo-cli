@@ -140,7 +140,8 @@ void deleteTask() {
       errorMessage: "Task could not be deleted");
 }
 
-//This function actually helps the user when a user accidentally types another command instead of exit or changes his mind. It helps him to exit from other instances, such as `addTask()` or `deleteTask()`.
+/*  This function actually helps the user when a user accidentally types another command instead of exit or changes his mind. 
+ It helps him to exit from other instances, such as `addTask()` or `deleteTask()`. */
 void checkExit(String command) {
   if (command.toLowerCase() == "exit") {
     main(); //It exits to `main()` function.
@@ -181,7 +182,8 @@ void loadTasks() {
   }
 }
 
-//This function displays the saved tasks in the screen. Creating a new function for this case was not necessary, but I did it to make the code clean.
+/* This function displays the saved tasks in the screen. Creating a new function for this case was not necessary, 
+but I did it to make the code clean. */
 void displayTasks() {
   for (String task in savedTasks) {
     int taskNumber = savedTasks.indexOf(task) + 1;
